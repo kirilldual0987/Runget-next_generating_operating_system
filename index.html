@@ -1,744 +1,788 @@
-#!/bin/bash
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runget - Легкая, быстрая, простая и красивая ОС</title>
+    <style>
+        :root {
+            /* Цвета, основанные на KDE Breeze Dark и ваших предпочтениях */
+            --bg-primary: #232629;
+            --bg-secondary: #2a2e32;
+            --bg-card: #31363b;
+            --bg-hover: #3a3f44;
+            --text-primary: #eff0f1;
+            --text-secondary: #bdc3c7;
+            --accent-primary: #3daee9;
+            --accent-secondary: #16a085;
+            --success: #2ecc71;
+            --warning: #f67400;
+            --danger: #da4453;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
 
-# ╔═══════════════════════════════════════════════════════════════════╗
-# ║  Beautifulconfig v2.1 for Runget (KDE Plasma Support)             ║
-# ║  Created by kirilldual0987 © 2025                                 ║
-# ╚═══════════════════════════════════════════════════════════════════╝
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-VERSION="2.1"
-AUTHOR="kirilldual0987"
-YEAR="2025"
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-# URL обоев с Google Drive
-WALLPAPER_URL="https://drive.usercontent.google.com/u/0/uc?id=1DMUeoRB3fMxzBVo33jyiKJCCctfCTPXb&export=download"
-WALLPAPER_DIR="$HOME/.local/share/wallpapers/Beautifulconfig"
-WALLPAPER_FILE="$WALLPAPER_DIR/wallpaper.jpg"
+        .navbar {
+            background-color: var(--bg-secondary);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
 
-# Лог файл
-LOG_FILE="/tmp/beautifulconfig_$(date +%Y%m%d_%H%M%S).log"
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# ЦВЕТА И СТИЛИ
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        .logo {
+            display: flex;
+            align-items: center;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-CYAN='\033[0;36m'
-WHITE='\033[1;37m'
-GRAY='\033[0;90m'
-BOLD='\033[1m'
-ITALIC='\033[3m'
-NC='\033[0m'
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
 
-DONE="✅"
-FAIL="❌"
-WARN="⚠️"
-INFO="ℹ️"
-ARROW="➤"
-GEAR="⚙"
-DOWNLOAD="⬇"
-ROCKET="🚀"
-STAR="★"
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
 
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# ФУНКЦИИ ИНТЕРФЕЙСА
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        .nav-links li {
+            margin-left: 2rem;
+        }
 
-clear_screen() {
-    clear
-    printf '\033[3J'
-}
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+        }
 
-show_banner() {
-    clear_screen
-    echo -e "${CYAN}${BOLD}"
-    cat << 'EOF'
-    
-    ╔═══════════════════════════════════════════════════════════════════╗
-    ║                                                                   ║
-    ║   ██████╗ ███████╗ █████╗ ██╗   ██╗████████╗██╗███████╗██╗   ██╗  ║
-    ║   ██╔══██╗██╔════╝██╔══██╗██║   ██║╚══██╔══╝██║██╔════╝██║   ██║  ║
-    ║   ██████╔╝█████╗  ███████║██║   ██║   ██║   ██║█████╗  ██║   ██║  ║
-    ║   ██╔══██╗██╔══╝  ██╔══██║██║   ██║   ██║   ██║██╔══╝  ╚██╗ ██╔╝  ║
-    ║   ██████╔╝███████╗██║  ██║╚██████╔╝   ██║   ██║██║      ╚████╔╝   ║
-    ║   ╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝    ╚═╝   ╚═╝╚═╝       ╚═══╝    ║
-    ║                                                                   ║
-    ║              ██████╗ ██████╗ ███╗   ██╗███████╗██╗ ██████╗        ║
-    ║             ██╔════╝██╔═══██╗████╗  ██║██╔════╝██║██╔════╝        ║
-    ║             ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║  ███╗       ║
-    ║             ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║   ██║       ║
-    ║             ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╔╝       ║
-    ║              ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝        ║
-    ║                                                                   ║
-    ╚═══════════════════════════════════════════════════════════════════╝
-    
-EOF
-    echo -e "${NC}"
-    echo -e "${PURPLE}${BOLD}                   Version ${VERSION} | Created by ${AUTHOR} © ${YEAR}${NC}"
-    echo -e "${GRAY}                         Designed for Runget Linux (KDE Plasma)${NC}"
-    echo ""
-    sleep 1
-}
+        .nav-links a:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-hover);
+        }
 
-animated_line() {
-    local width=65
-    echo -ne "${CYAN}"
-    for ((i=0; i<width; i++)); do
-        echo -n "━"
-        sleep 0.01
-    done
-    echo -e "${NC}"
-}
+        .hero {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--text-primary);
+            padding-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
 
-terminal_progress_bar() {
-    local current=$1
-    local total=$2
-    local task_name="$3"
-    local width=50
-    local percentage=$((current * 100 / total))
-    local filled=$((width * current / total))
-    local empty=$((width - filled))
-    
-    local color=$RED
-    if [ $percentage -ge 75 ]; then
-        color=$GREEN
-    elif [ $percentage -ge 50 ]; then
-        color=$YELLOW
-    elif [ $percentage -ge 25 ]; then
-        color=$CYAN
-    fi
-    
-    printf "\r    ${WHITE}${BOLD}[${NC}"
-    printf "${color}"
-    for ((i=0; i<filled; i++)); do printf "█"; done
-    printf "${GRAY}"
-    for ((i=0; i<empty; i++)); do printf "░"; done
-    printf "${NC}${WHITE}${BOLD}]${NC}"
-    printf " ${color}${BOLD}%3d%%${NC}" $percentage
-    printf " ${GRAY}│${NC} ${WHITE}${task_name}${NC}"
-    printf "%-20s" ""
-}
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(58, 63, 68, 0.2)"/></svg>');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: bottom right;
+            opacity: 0.3;
+        }
 
-print_status() {
-    local type=$1
-    local message="$2"
-    
-    case $type in
-        "info")
-            echo -e "    ${BLUE}${INFO}${NC}  ${WHITE}${message}${NC}"
-            ;;
-        "success")
-            echo -e "    ${GREEN}${DONE}${NC} ${GREEN}${message}${NC}"
-            ;;
-        "error")
-            echo -e "    ${RED}${FAIL}${NC} ${RED}${message}${NC}"
-            ;;
-        "warning")
-            echo -e "    ${YELLOW}${WARN}${NC}  ${YELLOW}${message}${NC}"
-            ;;
-        "task")
-            echo -e "    ${PURPLE}${ARROW}${NC}  ${BOLD}${message}${NC}"
-            ;;
-        "command")
-            echo -e "       ${GRAY}└─ Command: ${ITALIC}${message}${NC}"
-            ;;
-    esac
-}
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
 
-section_divider() {
-    local title="$1"
-    echo ""
-    echo -e "${CYAN}    ┌──────────────────────────────────────────────────────────────┐${NC}"
-    echo -e "${CYAN}    │${NC} ${BOLD}${WHITE}${GEAR} ${title}${NC}"
-    echo -e "${CYAN}    └──────────────────────────────────────────────────────────────┘${NC}"
-    echo ""
-}
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            animation: fadeInDown 1s ease;
+        }
 
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# ОПРЕДЕЛЕНИЕ ОКРУЖЕНИЯ РАБОЧЕГО СТОЛА
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            color: var(--text-secondary);
+            animation: fadeIn 1.5s ease;
+        }
 
-detect_desktop_environment() {
-    if [ "$XDG_CURRENT_DESKTOP" = "KDE" ] || [ "$DESKTOP_SESSION" = "plasma" ] || pgrep -x "plasmashell" > /dev/null; then
-        echo "kde"
-    elif [ "$XDG_CURRENT_DESKTOP" = "GNOME" ] || pgrep -x "gnome-shell" > /dev/null; then
-        echo "gnome"
-    elif [ "$XDG_CURRENT_DESKTOP" = "XFCE" ]; then
-        echo "xfce"
-    elif [ "$XDG_CURRENT_DESKTOP" = "MATE" ]; then
-        echo "mate"
-    elif [ "$XDG_CURRENT_DESKTOP" = "Cinnamon" ]; then
-        echo "cinnamon"
-    else
-        echo "unknown"
-    fi
-}
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-primary);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(61, 174, 233, 0.4);
+            animation: pulse 2s infinite;
+        }
 
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# УСТАНОВКА ОБОЕВ ДЛЯ KDE PLASMA
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(61, 174, 233, 0.6);
+        }
 
-set_wallpaper_kde() {
-    local wallpaper_path="$1"
-    
-    print_status "task" "Применение обоев для KDE Plasma..."
-    
-    # Метод 1: plasma-apply-wallpaperimage (Plasma 5.18+)
-    if command -v plasma-apply-wallpaperimage &> /dev/null; then
-        print_status "info" "Используем plasma-apply-wallpaperimage..."
-        plasma-apply-wallpaperimage "$wallpaper_path" 2>> "$LOG_FILE"
-        if [ $? -eq 0 ]; then
-            print_status "success" "Обои установлены через plasma-apply-wallpaperimage!"
-            return 0
-        fi
-    fi
-    
-    # Метод 2: через qdbus
-    if command -v qdbus &> /dev/null; then
-        print_status "info" "Используем qdbus..."
-        
-        qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
-            var allDesktops = desktops();
-            for (var i = 0; i < allDesktops.length; i++) {
-                var d = allDesktops[i];
-                d.wallpaperPlugin = 'org.kde.image';
-                d.currentConfigGroup = Array('Wallpaper', 'org.kde.image', 'General');
-                d.writeConfig('Image', 'file://${wallpaper_path}');
+        .btn-download {
+            background-color: var(--success);
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+            margin-right: 1rem;
+        }
+
+        .btn-download:hover {
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6);
+        }
+
+        .features {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: var(--accent-primary);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+            text-align: center;
+            border: 1px solid var(--bg-hover);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            background-color: var(--bg-hover);
+            border-color: var(--accent-primary);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--accent-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+        }
+
+        .news {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: var(--bg-secondary);
+        }
+
+        .news-item {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--bg-hover);
+        }
+
+        .news-date {
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        .devices {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+
+        .devices-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .device-card {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            transition: var(--transition);
+            border: 1px solid var(--bg-hover);
+        }
+
+        .device-card:hover {
+            background-color: var(--bg-hover);
+            transform: scale(1.05);
+            border-color: var(--accent-primary);
+        }
+
+        .device-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .download {
+            padding: 5rem 2rem;
+            text-align: center;
+            background-color: var(--bg-secondary);
+        }
+
+        .download-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .download-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .download-card {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            width: 280px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+            border: 1px solid var(--bg-hover);
+        }
+
+        .download-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            background-color: var(--bg-hover);
+            border-color: var(--accent-primary);
+        }
+
+        .download-card h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .download-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .gallery {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+            background-color: var(--bg-secondary);
+        }
+
+        .gallery-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: var(--accent-primary);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: var(--transition);
+        }
+
+        .gallery-item img:hover {
+            transform: scale(1.05);
+        }
+
+        .footer {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: left;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo img {
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .footer-links h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--text-primary);
+            background-color: var(--bg-hover);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--accent-primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--bg-hover);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
             }
-        " 2>> "$LOG_FILE"
-        
-        if [ $? -eq 0 ]; then
-            print_status "success" "Обои установлены через qdbus!"
-            return 0
-        fi
-    fi
-    
-    # Метод 3: через dbus-send
-    if command -v dbus-send &> /dev/null; then
-        print_status "info" "Используем dbus-send..."
-        
-        dbus-send --session --dest=org.kde.plasmashell --type=method_call \
-            /PlasmaShell org.kde.PlasmaShell.evaluateScript string:"
-            var allDesktops = desktops();
-            for (var i = 0; i < allDesktops.length; i++) {
-                var d = allDesktops[i];
-                d.wallpaperPlugin = 'org.kde.image';
-                d.currentConfigGroup = Array('Wallpaper', 'org.kde.image', 'General');
-                d.writeConfig('Image', 'file://${wallpaper_path}');
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
-        " 2>> "$LOG_FILE"
-        
-        if [ $? -eq 0 ]; then
-            print_status "success" "Обои установлены через dbus-send!"
-            return 0
-        fi
-    fi
-    
-    # Метод 4: Прямое редактирование конфига (fallback)
-    print_status "warning" "Пробуем прямое редактирование конфига..."
-    
-    local plasma_config="$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
-    
-    if [ -f "$plasma_config" ]; then
-        # Бэкап
-        cp "$plasma_config" "${plasma_config}.backup"
-        
-        # Заменяем путь к обоям
-        sed -i "s|Image=.*|Image=file://${wallpaper_path}|g" "$plasma_config"
-        
-        # Перезапускаем plasmashell
-        print_status "info" "Перезапуск plasmashell..."
-        kquitapp5 plasmashell 2>> "$LOG_FILE" && kstart5 plasmashell 2>> "$LOG_FILE" &
-        
-        sleep 3
-        print_status "success" "Обои установлены через редактирование конфига!"
-        return 0
-    fi
-    
-    print_status "error" "Не удалось установить обои автоматически"
-    print_status "info" "Обои сохранены: $wallpaper_path"
-    print_status "info" "Установите вручную: ПКМ на рабочем столе → Настроить рабочий стол"
-    return 1
-}
+        }
 
-set_wallpaper_gnome() {
-    local wallpaper_path="$1"
-    
-    print_status "task" "Применение обоев для GNOME..."
-    
-    gsettings set org.gnome.desktop.background picture-uri "file://$wallpaper_path" 2>> "$LOG_FILE"
-    gsettings set org.gnome.desktop.background picture-uri-dark "file://$wallpaper_path" 2>> "$LOG_FILE"
-    gsettings set org.gnome.desktop.background picture-options "zoom" 2>> "$LOG_FILE"
-    
-    print_status "success" "Обои установлены для GNOME!"
-    return 0
-}
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
 
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# ОСНОВНЫЕ ФУНКЦИИ
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+            }
 
-check_dependencies() {
-    section_divider "ПРОВЕРКА ЗАВИСИМОСТЕЙ"
-    
-    local deps=("curl" "wget")
-    local missing=()
-    
-    # Добавляем kdialog для KDE или zenity для других
-    local de=$(detect_desktop_environment)
-    if [ "$de" = "kde" ]; then
-        deps+=("kdialog")
-    else
-        deps+=("zenity")
-    fi
-    
-    for dep in "${deps[@]}"; do
-        if command -v $dep &> /dev/null; then
-            print_status "success" "$dep установлен"
-        else
-            print_status "warning" "$dep не найден - будет установлен"
-            missing+=("$dep")
-        fi
-    done
-    
-    if [ ${#missing[@]} -gt 0 ]; then
-        echo ""
-        print_status "info" "Установка недостающих зависимостей..."
-        sudo apt install -y "${missing[@]}" &>> "$LOG_FILE"
-        print_status "success" "Зависимости установлены"
-    fi
-    
-    echo ""
-}
+            .nav-links {
+                margin-top: 1rem;
+            }
 
-check_system() {
-    section_divider "ИНФОРМАЦИЯ О СИСТЕМЕ"
-    
-    # Определяем DE
-    local de=$(detect_desktop_environment)
-    
-    case $de in
-        "kde")
-            print_status "info" "Desktop: KDE Plasma"
-            if command -v plasmashell &> /dev/null; then
-                local plasma_ver=$(plasmashell --version 2>/dev/null | head -1)
-                print_status "info" "Plasma: ${plasma_ver}"
-            fi
-            ;;
-        "gnome")
-            print_status "info" "Desktop: GNOME"
-            if command -v gnome-shell &> /dev/null; then
-                local gnome_ver=$(gnome-shell --version 2>/dev/null)
-                print_status "info" "${gnome_ver}"
-            fi
-            ;;
-        *)
-            print_status "warning" "Desktop: ${de} (может не поддерживаться полностью)"
-            ;;
-    esac
-    
-    print_status "info" "Kernel: $(uname -r)"
-    
-    if [ -f /etc/os-release ]; then
-        source /etc/os-release
-        print_status "info" "OS: ${PRETTY_NAME}"
-    fi
-    
-    echo ""
-    sleep 1
-}
+            .nav-links li {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
 
-download_and_set_wallpaper() {
-    section_divider "УСТАНОВКА ОБОЕВ"
-    
-    local de=$(detect_desktop_environment)
-    print_status "info" "Обнаружено окружение: ${de^^}"
-    
-    print_status "task" "Загрузка обоев с Google Drive..."
-    print_status "command" "curl -L \"$WALLPAPER_URL\" -o \"$WALLPAPER_FILE\""
-    
-    # Создаём директорию
-    mkdir -p "$WALLPAPER_DIR"
-    
-    echo ""
-    
-    # Загружаем обои с прогресс-баром
-    curl -L "$WALLPAPER_URL" -o "$WALLPAPER_FILE" \
-        --progress-bar \
-        --connect-timeout 30 \
-        --max-time 120 2>&1 | \
-        while IFS= read -r line; do
-            echo -ne "\r    ${CYAN}${DOWNLOAD}${NC} Загрузка... $line"
-        done
-    
-    echo ""
-    echo ""
-    
-    # Проверяем успешность загрузки
-    if [ -f "$WALLPAPER_FILE" ] && [ -s "$WALLPAPER_FILE" ]; then
-        local filesize=$(du -h "$WALLPAPER_FILE" | cut -f1)
-        print_status "success" "Обои загружены: $WALLPAPER_FILE ($filesize)"
-        
-        # Устанавливаем обои в зависимости от DE
-        case $de in
-            "kde")
-                set_wallpaper_kde "$WALLPAPER_FILE"
-                ;;
-            "gnome")
-                set_wallpaper_gnome "$WALLPAPER_FILE"
-                ;;
-            *)
-                print_status "warning" "Автоустановка обоев не поддерживается для $de"
-                print_status "info" "Обои сохранены: $WALLPAPER_FILE"
-                print_status "info" "Установите их вручную через настройки рабочего стола"
-                ;;
-        esac
-    else
-        print_status "error" "Ошибка загрузки обоев!"
-        return 1
-    fi
-    
-    echo ""
-    sleep 1
-}
+            .hero h1 {
+                font-size: 2.5rem;
+            }
 
-execute_command() {
-    local step_num=$1
-    local total_steps=$2
-    local description="$3"
-    local command="$4"
-    local auto_input="$5"
-    
-    echo ""
-    echo -e "${CYAN}    ╭─────────────────────────────────────────────────────────────╮${NC}"
-    echo -e "${CYAN}    │${NC} ${BOLD}${WHITE}STEP ${step_num}/${total_steps}${NC} ${GRAY}│${NC} ${YELLOW}${description}${NC}"
-    echo -e "${CYAN}    ╰─────────────────────────────────────────────────────────────╯${NC}"
-    
-    print_status "command" "$command"
-    echo ""
-    
-    echo -e "    ${GRAY}────────────────────── OUTPUT ──────────────────────${NC}"
-    echo ""
-    
-    if [ -n "$auto_input" ]; then
-        echo "$auto_input" | eval "$command" 2>&1 | while IFS= read -r line; do
-            echo -e "    ${GRAY}│${NC} $line"
-        done
-    else
-        eval "$command" 2>&1 | while IFS= read -r line; do
-            echo -e "    ${GRAY}│${NC} $line"
-        done
-    fi
-    
-    local exit_code=${PIPESTATUS[0]}
-    
-    echo ""
-    echo -e "    ${GRAY}─────────────────────────────────────────────────────${NC}"
-    
-    if [ $exit_code -eq 0 ]; then
-        print_status "success" "Команда выполнена успешно!"
-        return 0
-    else
-        print_status "error" "Команда завершилась с ошибкой (код: $exit_code)"
-        return 1
-    fi
-}
+            .hero p {
+                font-size: 1.2rem;
+            }
 
-run_with_kdialog_progress() {
-    local dbusRef=$(kdialog --progressbar "Инициализация..." 7 --title "🚀 Beautifulconfig v${VERSION}")
-    
-    qdbus $dbusRef Set "" value 0
-    qdbus $dbusRef setLabelText "[1/7] Обновление репозитория SPI..."
-    sudo spi repo-update >> "$LOG_FILE" 2>&1
-    
-    qdbus $dbusRef Set "" value 1
-    qdbus $dbusRef setLabelText "[2/7] Запуск SPI..."
-    spi >> "$LOG_FILE" 2>&1
-    
-    qdbus $dbusRef Set "" value 2
-    qdbus $dbusRef setLabelText "[3/7] Обновление пакетов SPI..."
-    sudo spi update >> "$LOG_FILE" 2>&1
-    
-    qdbus $dbusRef Set "" value 3
-    qdbus $dbusRef setLabelText "[4/7] Обновление системных пакетов..."
-    sudo apt update >> "$LOG_FILE" 2>&1
-    sudo apt upgrade -y >> "$LOG_FILE" 2>&1
-    
-    qdbus $dbusRef Set "" value 4
-    qdbus $dbusRef setLabelText "[5/7] Установка Telegram..."
-    echo "2" | sudo spi install --flatpak telegram >> "$LOG_FILE" 2>&1
-    
-    qdbus $dbusRef Set "" value 5
-    qdbus $dbusRef setLabelText "[6/7] Установка Baldi..."
-    sudo spi install --spi baldi >> "$LOG_FILE" 2>&1
-    
-    qdbus $dbusRef Set "" value 6
-    qdbus $dbusRef setLabelText "[7/7] Установка Chrome..."
-    sudo spi install --spi chrome >> "$LOG_FILE" 2>&1
-    
-    qdbus $dbusRef Set "" value 7
-    qdbus $dbusRef setLabelText "Готово!"
-    sleep 1
-    qdbus $dbusRef close
-    
-    return 0
-}
+            .btn {
+                display: block;
+                margin-bottom: 1rem;
+                width: 100%;
+            }
 
-run_with_zenity_progress() {
-    (
-        echo "0"
-        echo "# Инициализация..."
-        sleep 1
-        
-        echo "14"
-        echo "# [1/7] Обновление репозитория SPI..."
-        sudo spi repo-update >> "$LOG_FILE" 2>&1
-        
-        echo "28"
-        echo "# [2/7] Запуск SPI..."
-        spi >> "$LOG_FILE" 2>&1
-        
-        echo "42"
-        echo "# [3/7] Обновление пакетов SPI..."
-        sudo spi update >> "$LOG_FILE" 2>&1
-        
-        echo "56"
-        echo "# [4/7] Обновление системных пакетов..."
-        sudo apt update >> "$LOG_FILE" 2>&1
-        sudo apt upgrade -y >> "$LOG_FILE" 2>&1
-        
-        echo "70"
-        echo "# [5/7] Установка Telegram..."
-        echo "2" | sudo spi install --flatpak telegram >> "$LOG_FILE" 2>&1
-        
-        echo "84"
-        echo "# [6/7] Установка Baldi..."
-        sudo spi install --spi baldi >> "$LOG_FILE" 2>&1
-        
-        echo "98"
-        echo "# [7/7] Установка Chrome..."
-        sudo spi install --spi chrome >> "$LOG_FILE" 2>&1
-        
-        echo "100"
-        echo "# Готово!"
-        
-    ) | zenity --progress \
-        --title="🚀 Beautifulconfig v${VERSION}" \
-        --text="Подготовка..." \
-        --percentage=0 \
-        --auto-close \
-        --width=500 \
-        --no-cancel
-    
-    return $?
-}
+            .btn-download {
+                margin-right: 0;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="#" class="logo">
+                <img src="https://private-user-images.githubusercontent.com/201611719/453971335-dffc803c-7fcd-4e9d-95ad-b87c157f74d4.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTM5NDY5NDIsIm5iZiI6MTc1Mzk0NjY0MiwicGF0aCI6Ii8yMDE2MTE3MTkvNDUzOTcxMzM1LWRmZmM4MDNjLTdmY2QtNGU5ZC05NWFkLWI4N2MxNTdmNzRkNC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNzMxJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDczMVQwNzI0MDJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0wYTM4ZjBkZGRiMTZiN2NmMWZiYmI4ZTQ0MzE4MDg5ZDM5MmNlZDYxNThiY2MwZmRlYjAxOWIxYWY4MDU5MzVlJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.HvHjPr7UXP5i9CH9FJ_N5c4HOPyq1F79ljqcZ4b8CWQ" alt="Runget Logo">
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Возможности</a></li>
+                <li><a href="#news">Новости</a></li>
+                <li><a href="#devices">Устройства</a></li>
+                <li><a href="#download">Скачать</a></li>
+                <li><a href="#gallery">Галерея</a></li>
+                <li><a href="#community">Сообщество</a></li>
+            </ul>
+        </div>
+    </nav>
 
-run_installation_terminal() {
-    section_divider "ВЫПОЛНЕНИЕ КОМАНД"
-    
-    local total=7
-    local current=0
-    local failed=0
-    
-    declare -a commands=(
-        "Обновление репозитория SPI|sudo spi repo-update|"
-        "Запуск SPI|spi|"
-        "Обновление пакетов SPI|sudo spi update|"
-        "Обновление системных пакетов|sudo apt update && sudo apt upgrade -y|"
-        "Установка Telegram (Flatpak)|sudo spi install --flatpak telegram|2"
-        "Установка Baldi|sudo spi install --spi baldi|"
-        "Установка Chrome|sudo spi install --spi chrome|"
-    )
-    
-    for cmd_entry in "${commands[@]}"; do
-        IFS='|' read -r description command auto_input <<< "$cmd_entry"
-        current=$((current + 1))
-        
-        terminal_progress_bar $current $total "$description"
-        echo ""
-        
-        if execute_command $current $total "$description" "$command" "$auto_input"; then
-            print_status "success" "Шаг $current/$total завершён"
-        else
-            print_status "error" "Шаг $current/$total провален"
-            failed=$((failed + 1))
-        fi
-        
-        sleep 1
-    done
-    
-    return $failed
-}
+    <!-- Герой-секция -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Runget — удобная, красивая и быстрая операционная система!</h1>
+            <p>Мощная операционная система для повседневных задач и большими возможностями в запуске Windows, Linux и Android программ. Идеально подходит для дома, офиса, серверов и игр.</p>
+            <div>
+                <a href="#download" class="btn btn-download">Скачать сейчас</a>
+                <a href="#features" class="btn">Узнать больше</a>
+            </div>
+        </div>
+    </section>
 
-show_final_report() {
-    local failed=$1
-    
-    echo ""
-    echo ""
-    
-    if [ $failed -eq 0 ]; then
-        echo -e "${GREEN}${BOLD}"
-        cat << 'EOF'
-    ╔═══════════════════════════════════════════════════════════════════╗
-    ║                                                                   ║
-    ║     ███████╗██╗   ██╗ ██████╗ ██████╗███████╗███████╗███████╗     ║
-    ║     ██╔════╝██║   ██║██╔════╝██╔════╝██╔════╝██╔════╝██╔════╝     ║
-    ║     ███████╗██║   ██║██║     ██║     █████╗  ███████╗███████╗     ║
-    ║     ╚════██║██║   ██║██║     ██║     ██╔══╝  ╚════██║╚════██║     ║
-    ║     ███████║╚██████╔╝╚██████╗╚██████╗███████╗███████║███████║     ║
-    ║     ╚══════╝ ╚═════╝  ╚═════╝ ╚═════╝╚══════╝╚══════╝╚══════╝     ║
-    ║                                                                   ║
-    ║               ✅ ВСЕ ЗАДАЧИ ВЫПОЛНЕНЫ УСПЕШНО!                    ║
-    ║                                                                   ║
-    ╚═══════════════════════════════════════════════════════════════════╝
-EOF
-        echo -e "${NC}"
-    else
-        echo -e "${YELLOW}${BOLD}"
-        cat << 'EOF'
-    ╔═══════════════════════════════════════════════════════════════════╗
-    ║          ⚠️  УСТАНОВКА ЗАВЕРШЕНА С ПРЕДУПРЕЖДЕНИЯМИ               ║
-    ╚═══════════════════════════════════════════════════════════════════╝
-EOF
-        echo -e "${NC}"
-        print_status "warning" "Некоторые команды завершились с ошибками: $failed"
-    fi
-    
-    echo ""
-    echo -e "    ${GRAY}╭─────────────────────────────────────────────────────────────╮${NC}"
-    echo -e "    ${GRAY}│${NC} ${INFO}  Лог: ${CYAN}${LOG_FILE}${NC}"
-    echo -e "    ${GRAY}│${NC} ${ROCKET} Версия: ${CYAN}Beautifulconfig v${VERSION}${NC}"
-    echo -e "    ${GRAY}│${NC} ${STAR}  Автор: ${CYAN}${AUTHOR} © ${YEAR}${NC}"
-    echo -e "    ${GRAY}╰─────────────────────────────────────────────────────────────╯${NC}"
-    echo ""
-}
+    <!-- Возможности -->
+    <section class="features" id="features">
+        <h2 class="section-title">Почему Runget?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fab fa-linux"></i> <!-- Изменено на Linux -->
+                </div>
+                <h3>На базе Ubuntu</h3>
+                <p>Runget построен на проверенной временем платформе Ubuntu, обеспечивая стабильность, безопасность и совместимость с огромной экосистемой пакетов.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i> <!-- Иконка для AI -->
+                </div>
+                <h3>Управление через ИИ</h3>
+                <p>Встроенный ИИ-ассистент Lily&Anemon поможет вам управлять системой простыми голосовыми командами.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fab fa-windows"></i>
+                </div>
+                <h3>Поддержка Windows-приложений</h3>
+                <p>Запускайте ВСЕ ваши любимые Windows-программы без переустановки системы! Игры, офисные приложения и многое другое работают из коробки.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fab fa-android"></i>
+                </div>
+                <h3>Android-приложения</h3>
+                <p>Устанавливайте и используйте приложения из Google Play Store или apk файлы прямо на вашем компьютере с Runget!</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-random"></i>
+                </div>
+                <h3>Поддержка других дистрибутивов</h3>
+                <p>Запускайте приложения, созданные для Ubuntu, Fedora, Arch Linux (Manjaro) и других дистрибутивов без дополнительных настроек!</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h3>Игровая платформа</h3>
+                <p>Оптимизированная для игр система с поддержкой Steam и Epic Games!</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h3>Красивый интерфейс</h3>
+                <p>Современный и интуитивно понятный пользовательский интерфейс с анимациями и эффектами, которые радуют глаз. Вдохновлён KDE Plasma.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h3>Высокая производительность</h3>
+                <p>Оптимизированная система, которая работает быстро даже на слабом оборудовании и старых компьютерах.</p>
+            </div>
+        </div>
+    </section>
 
-select_mode() {
-    section_divider "ВЫБОР РЕЖИМА РАБОТЫ"
-    
-    local de=$(detect_desktop_environment)
-    local gui_name="Zenity"
-    [ "$de" = "kde" ] && gui_name="KDialog"
-    
-    echo -e "    ${WHITE}${BOLD}Выберите режим установки:${NC}"
-    echo ""
-    echo -e "    ${CYAN}[1]${NC} ${WHITE}🖥️  Терминальный режим${NC}"
-    echo -e "        ${GRAY}Подробный вывод команд с прогресс-баром${NC}"
-    echo ""
-    echo -e "    ${CYAN}[2]${NC} ${WHITE}🪟  GUI режим (${gui_name})${NC}"
-    echo -e "        ${GRAY}Графический прогресс-бар${NC}"
-    echo ""
-    echo -e "    ${CYAN}[3]${NC} ${WHITE}🎨  Только обои${NC}"
-    echo -e "        ${GRAY}Только загрузка и установка обоев${NC}"
-    echo ""
-    echo -e "    ${CYAN}[0]${NC} ${WHITE}❌  Выход${NC}"
-    echo ""
-    
-    read -p "    Ваш выбор [1-3, 0]: " mode_choice
-    echo ""
-    
-    case $mode_choice in
-        1) return 1 ;;
-        2) return 2 ;;
-        3) return 3 ;;
-        0) return 0 ;;
-        *) return 1 ;;
-    esac
-}
+    <!-- Новости -->
+    <section class="news" id="news">
+        <h2 class="section-title">Новости Runget</h2>
+        <div class="news-list">
+            <div class="news-item">
+                <span class="news-date">[07.05.2025]</span> Runget 1.0 Anythink Anywhere is coming soon!
+            </div>
+            <div class="news-item">
+                <span class="news-date">[09.04.2025]</span> Sorry, but we're delete the RungetOff Telegram chanel, but we have a new chanell here: <a href="https://t.me/runget_rt">https://t.me/runget_rt</a>
+            </div>
+            <div class="news-item">
+                <span class="news-date">[01.09.2025]</span> Runget 1.0 core is aviable now!
+            </div>
+            <div class="news-item">
+                <span class="news-date">[03.11.2025]</span> Runget 1.0 released and available for downloading!
+            </div>
+            <div class="news-item">
+                <span class="news-date">[05.11.2025]</span> Runget 1.0 tested on Qemu with Core2duo emulation. Really cool results! No bugs!
+            </div>
+            <div class="news-item">
+                <span class="news-date">[06.11.2025]</span> Running Microsoft Windows and Android apps double checked on Runget 1.0. Cool results! No bugs!
+            </div>
+            <div class="news-item">
+                <span class="news-date">[07.11.2025]</span> Running Debian, Ubuntu, Arch, Gentoo and Fedora apps on Runget 1.0. Everything worked perfectly!
+            </div>
+        </div>
+    </section>
 
-confirm_start() {
-    echo ""
-    echo -e "    ${YELLOW}${BOLD}⚠️  ВНИМАНИЕ${NC}"
-    echo -e "    ${WHITE}Будут выполнены следующие действия:${NC}"
-    echo ""
-    echo -e "    ${GRAY}1.${NC} Загрузка и установка обоев"
-    echo -e "    ${GRAY}2.${NC} sudo spi repo-update"
-    echo -e "    ${GRAY}3.${NC} spi"
-    echo -e "    ${GRAY}4.${NC} sudo spi update"
-    echo -e "    ${GRAY}5.${NC} sudo apt update && sudo apt upgrade -y"
-    echo -e "    ${GRAY}6.${NC} sudo spi install --flatpak telegram (выбор 2)"
-    echo -e "    ${GRAY}7.${NC} sudo spi install --spi baldi"
-    echo -e "    ${GRAY}8.${NC} sudo spi install --spi chrome"
-    echo ""
-    
-    read -p "    Продолжить? [Y/n]: " confirm
-    
-    case $confirm in
-        [Nn]*) return 1 ;;
-        *) return 0 ;;
-    esac
-}
+    <!-- Устройства -->
+    <section class="devices" id="devices">
+        <div class="devices-container">
+            <h2 class="section-title">Runget на любом устройстве</h2>
+            <p>Универсальная система, которая работает на всех ваших устройствах</p>
+            <div class="devices-grid">
+                <div class="device-card">
+                    <div class="device-icon">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <h3>Компьютеры</h3>
+                    <p>Полноценная замена Windows на вашем домашнем или рабочем ПК</p>
+                </div>
+                <div class="device-card">
+                    <div class="device-icon">
+                        <i class="fas fa-laptop"></i>
+                    </div>
+                    <h3>Ноутбуки</h3>
+                    <p>Оптимизированная работа с батареей и оборудованием ноутбуков</p>
+                </div>
+                <div class="device-card">
+                    <div class="device-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3>Серверы</h3>
+                    <p>Мощная и стабильная платформа для ваших серверных решений</p>
+                </div>
+                <div class="device-card">
+                    <div class="device-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Телефоны</h3>
+                    <p>Экспериментальная поддержка смартфонов и планшетов</p>
+                </div>
+                <div class="device-card">
+                    <div class="device-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <h3>Raspberry Pi</h3>
+                    <p>Идеальное решение для одноплатных компьютеров и IoT-устройств. <em>(В разработке)</em></p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# ГЛАВНАЯ ФУНКЦИЯ
-#━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    <!-- Скачать -->
+    <section class="download" id="download">
+        <div class="download-container">
+            <h2 class="section-title">Скачать Runget</h2>
+            <p>Выберите версию для вашего устройства</p>
+            <div class="download-options">
+                <div class="download-card">
+                    <h3>Runget 1.0</h3>
+                    <p>Полная версия с графическим интерфейсом для домашних компьютеров и ноутбуков</p>
+                    <a href="https://drive.google.com/file/d/1AojkzRfheu0-cI5q1ZW_8ISjkYRk9ocZ/view?usp=drivesdk" class="btn btn-download">Скачать (ISO)</a>
+                </div>
+                <div class="download-card">
+                    <h3>Runget 1.0 Core</h3>
+                    <p>LTS/ATS версия для серверов и продвинутых пользователей</p>
+                    <a href="https://drive.google.com/file/d/1qkSEGjF2jDhtO2TqSy53rBtyOa2SmB4t/view?usp=drivesdk" class="btn btn-download">Скачать (ISO)</a>
+                </div>
+                <div class="download-card">
+                    <h3>Raspberry Pi</h3>
+                    <p>Специальная сборка для одноплатных компьютеров Raspberry Pi. <em>(В разработке)</em></p>
+                    <!-- Кнопка отключена -->
+                    <button class="btn btn-download" disabled style="opacity: 0.6; cursor: not-allowed;">Скоро...</button>
+                </div>
+            </div>
+        </div>
+    </section>
 
-main() {
-    echo "=== Beautifulconfig v${VERSION} by ${AUTHOR} ===" > "$LOG_FILE"
-    echo "Started: $(date)" >> "$LOG_FILE"
-    echo "User: $USER" >> "$LOG_FILE"
-    echo "Desktop: $(detect_desktop_environment)" >> "$LOG_FILE"
-    echo "========================================" >> "$LOG_FILE"
-    
-    show_banner
-    animated_line
-    
-    check_system
-    check_dependencies
-    
-    select_mode
-    local mode=$?
-    
-    local de=$(detect_desktop_environment)
-    
-    case $mode in
-        0)
-            print_status "info" "Выход из программы..."
-            exit 0
-            ;;
-        1)
-            if confirm_start; then
-                download_and_set_wallpaper
-                run_installation_terminal
-                show_final_report $?
-            else
-                print_status "info" "Операция отменена"
-            fi
-            ;;
-        2)
-            if confirm_start; then
-                download_and_set_wallpaper
-                
-                if [ "$de" = "kde" ] && command -v kdialog &> /dev/null; then
-                    run_with_kdialog_progress
-                    kdialog --msgbox "Все задачи выполнены!\n\nАвтор: ${AUTHOR}\nЛог: $LOG_FILE" --title "✅ Успех!"
-                else
-                    run_with_zenity_progress
-                    zenity --info --title="✅ Успех!" --text="Все задачи выполнены!\n\nАвтор: ${AUTHOR}\nЛог: $LOG_FILE" --width=400
-                fi
-                
-                show_final_report 0
-            else
-                print_status "info" "Операция отменена"
-            fi
-            ;;
-        3)
-            download_and_set_wallpaper
-            show_final_report 0
-            ;;
-    esac
-    
-    echo "" >> "$LOG_FILE"
-    echo "Finished: $(date)" >> "$LOG_FILE"
-    
-    echo ""
-    echo -e "    ${PURPLE}${BOLD}Спасибо за использование Beautifulconfig!${NC}"
-    echo -e "    ${GRAY}Created by ${AUTHOR} © ${YEAR}${NC}"
-    echo -e "    ${GRAY}Press any key to exit...${NC}"
-    read -n 1 -s
-}
+    <!-- Галерея -->
+    <section class="gallery" id="gallery">
+        <h2 class="gallery-title">Галерея Runget</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="https://github.com/user-attachments/assets/7296ed95-d2d0-4693-8b65-a0193eaeb880" alt="Runget 1.0 Anythink Anywhere">
+            </div>
+            <div class="gallery-item">
+                <img src="https://github.com/user-attachments/assets/8daac9e6-442a-45ea-a9c8-a8da8293cdbf" alt="Runget 1.0 Anythink Anywhere(2)">
+            </div>
+            <div class="gallery-item">
+                <img src="https://github.com/user-attachments/assets/cd00d85f-887d-4c61-bf02-9cbaf823eeac" alt="Runget 1.0 Anythink Anywhere(3)">
+            </div>
+            <div class="gallery-item">
+                <img src="https://github.com/user-attachments/assets/fc973a90-011e-40a7-a548-d1cc392e798e" alt="Runget 1.0 Anythink Anywhere(4)">
+            </div>
+            <div class="gallery-item">
+                <img src="https://github.com/user-attachments/assets/0b5a2fa2-f7ac-40c8-bc46-1481568e4842" alt="Runget 1.0 Anythink Anywhere(5)">
+            </div>
+            <div class="gallery-item">
+                <img src="https://github.com/user-attachments/assets/b4306b28-e013-4e0e-9e30-1292b8f6f876" alt="Runget 1.0 Anythink Anywhere(6)">
+            </div>
+            <div class="gallery-item">
+                <img src="https://github.com/user-attachments/assets/ca25da02-9359-47bf-893d-fb24757d66d8" alt="IMG-20250508-WA0002">
+            </div>
+            <div class="gallery-item">
+                <img src="https://github.com/user-attachments/assets/e22b9726-2ed9-4828-9b2e-2d35161a1590" alt="Runget Wallpapers">
+            </div>
+        </div>
+    </section>
 
-main "$@"
+    <!-- Подвал -->
+    <footer class="footer" id="community">
+        <div class="footer-container">
+            <div class="footer-about">
+                <div class="footer-logo">
+                    <img src="https://private-user-images.githubusercontent.com/201611719/453971335-dffc803c-7fcd-4e9d-95ad-b87c157f74d4.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTM5NDY5NDIsIm5iZiI6MTc1Mzk0NjY0MiwicGF0aCI6Ii8yMDE2MTE3MTkvNDUzOTcxMzM1LWRmZmM4MDNjLTdmY2QtNGU5ZC05NWFkLWI4N2MxNTdmNzRkNC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNzMxJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDczMVQwNzI0MDJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0wYTM4ZjBkZGRiMTZiN2NmMWZiYmI4ZTQ0MzE4MDg5ZDM5MmNlZDYxNThiY2MwZmRlYjAxOWIxYWY4MDU5MzVlJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.HvHjPr7UXP5i9CH9FJ_N5c4HOPyq1F79ljqcZ4b8CWQ" alt="Runget Logo">
+                </div>
+                <p>Универсальная операционная система для всех ваших устройств. Мощь Runget с совместимостью Windows, Linux и Android.</p>
+                <div class="social-links">
+                    <a href="https://t.me/runget_rt"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-vk"></i></a>
+                    <a href="https://github.com/Kolyadual/Runget-next_generating_operating_system?ysclid=mdr2ci0kuh492924291"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h3>Ресурсы</h3>
+                <ul>
+                    <li><a href="#">Документация</a></li>
+                    <li><a href="#">Форум</a></li>
+                    <li><a href="#">Блог</a></li>
+                    <li><a href="#">Галерея</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h3>Поддержка</h3>
+                <ul>
+                    <li><a href="mailto:runget.feedback@gmail.com">Email: runget.feedback@gmail.com</a></li>
+                    <li><a href="https://t.me/kirilldual">Telegram: @kirilldual</a></li>
+                    <li><a href="#">Пожертвования</a></li>
+                    <li><a href="#">Контакты</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h3>Разработка</h3>
+                <ul>
+                    <li><a href="https://github.com/Kolyadual">Исходный код</a></li>
+                    <li><a href="#">Баги и предложения</a></li>
+                    <li><a href="#">Для разработчиков</a></li>
+                    <li><a href="#">Дорожная карта</a></li>
+                </ul>
+                <h3>Разработчики</h3>
+                <ul>
+                    <li>Kolyadual - Основатель, Создатель ПО</li>
+                    <li>Kirilldual - Дизайнер</li>
+                    <li>Seregaosm - Дизайнер №2, Создатель ПО</li>
+                    <li>Neeby - Создатель ПО</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Kolyadual and Runget team. Все права защищены.</p>
+        </div>
+    </footer>
+</body>
+</html>
